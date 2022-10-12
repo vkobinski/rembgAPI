@@ -1,5 +1,6 @@
 package com.seuestilo.rembg.controller;
 
+import com.seuestilo.rembg.python.PythonExec;
 import com.seuestilo.rembg.storage.StorageFileNotFoundException;
 import com.seuestilo.rembg.storage.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,12 @@ import java.util.stream.Collectors;
 public class FileUploaderController {
 
     private final StorageService storageService;
+    private final PythonExec pythonExec;
 
     @Autowired
-    public FileUploaderController(StorageService storageService) {
+    public FileUploaderController(StorageService storageService, PythonExec pythonExec) {
         this.storageService = storageService;
+        this.pythonExec = pythonExec;
     }
 
     @GetMapping("/")
@@ -45,9 +48,11 @@ public class FileUploaderController {
     }
 
     @PostMapping("/")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+    public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException, InterruptedException {
         storageService.store(file);
         redirectAttributes.addFlashAttribute("message", "You successfully uploaded " + file.getOriginalFilename() + "!");
+
+        pythonExec.removeBackGround(file);
 
         return "redirect:/";
     }
