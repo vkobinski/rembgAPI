@@ -1,5 +1,6 @@
 package com.seuestilo.rembg.storage;
 
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -7,6 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -34,6 +38,18 @@ public class FileSystemStorageService implements StorageService {
         } catch (IOException e) {
             throw new StorageException("Failed to store file " + file.getOriginalFilename(), e);
         }
+    }
+
+    @Override
+    public void store(File file) {
+       try {
+           if(!file.exists()) {
+               throw new StorageException("Failed to store empty file");
+           }
+           Files.copy(file.toPath(), this.rootLocation.resolve(file.getName()));
+       } catch (IOException e) {
+           throw new StorageException("Failed to store file " + file.getName(), e);
+       }
     }
 
     @Override

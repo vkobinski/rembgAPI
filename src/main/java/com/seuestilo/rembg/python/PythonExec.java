@@ -1,9 +1,7 @@
 package com.seuestilo.rembg.python;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seuestilo.rembg.storage.StorageService;
-import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -13,17 +11,11 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.util.Objects;
 
 @Service
 public class PythonExec {
@@ -56,13 +48,17 @@ public class PythonExec {
         CloseableHttpResponse response = httpClient.execute(uploadFile);
         HttpEntity responseEntity = response.getEntity();
 
-        File file1 = new File("test.png");
+        File file1 = new File("b"+file.getOriginalFilename());
+
         try(OutputStream outputStream = new FileOutputStream(file1)){
             IOUtils.copy(responseEntity.getContent(), outputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        storageService.store(file1);
+
+        file1.delete();
     }
 
 }

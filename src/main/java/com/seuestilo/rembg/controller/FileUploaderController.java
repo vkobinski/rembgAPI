@@ -43,18 +43,18 @@ public class FileUploaderController {
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
         Resource file = storageService.loadAsResource(filename);
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() +
-                "\"").body(file);
+        //return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() +
+         //       "\"").body(file);
+
+        return ResponseEntity.ok(file);
     }
 
     @PostMapping("/")
     public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException, InterruptedException {
         storageService.store(file);
-        redirectAttributes.addFlashAttribute("message", "You successfully uploaded " + file.getOriginalFilename() + "!");
-
         pythonExec.removeBackGround(file);
 
-        return "redirect:/";
+        return "redirect:/files/" + "b" + file.getOriginalFilename();
     }
 
     @ExceptionHandler(StorageFileNotFoundException.class)
