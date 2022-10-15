@@ -1,4 +1,5 @@
-package com.seuestilo.rembg.models;
+package com.seuestilo.rembg.model;
+
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -6,19 +7,19 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
-@Table(name = "categoria")
+@Table(name = "peca")
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
-public class Categoria {
+public class Tamanho {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    private Long categoriaID;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long tamanhoID;
+
 
     @Column
     private String descricao;

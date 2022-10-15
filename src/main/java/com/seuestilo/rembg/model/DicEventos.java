@@ -1,4 +1,4 @@
-package com.seuestilo.rembg.models;
+package com.seuestilo.rembg.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -6,24 +6,25 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
-@Table(name = "usuario")
+@Table(name = "tipoPeca")
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
-public class Usuario {
+public class DicEventos {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long userID;
+    private Long ID;
 
     @Column
-    private String nome;
+    private String descEvento;
 
     @Column
-    private String email;
+    private String acaoFirebase;
 
+    @Column
+    private String parametro;
 }

@@ -1,4 +1,4 @@
-package com.seuestilo.rembg.models;
+package com.seuestilo.rembg.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
