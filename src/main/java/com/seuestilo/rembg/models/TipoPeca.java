@@ -20,14 +20,10 @@ public class TipoPeca {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long tipoPecaID;
 
-    @OneToMany(mappedBy = "categoriaTipo")
-    private Set<Peca> pecas;
-
     @Column
     private String descricao;
 
-    @Column
     @ManyToOne
-    @JoinColumn(name = "IDcategoria")
+    @JoinColumn(name = "categoria")
     private Categoria categoria;
 }

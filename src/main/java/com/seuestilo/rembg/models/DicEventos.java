@@ -20,10 +20,12 @@ public class DicEventos {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long ID;
 
-    @OneToMany(mappedBy = "IDdic")
-    private Set<FirebaseEvento> firebaseEventos;
-
+    @Column
     private String descEvento;
+
+    @Column
     private String acaoFirebase;
+
+    @Column
     private String parametro;
 }

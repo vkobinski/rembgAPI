@@ -20,9 +20,6 @@ public class Cor {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long corID;
 
-    @OneToMany(mappedBy = "IDcor")
-    private Set<Peca> pecas;
-
     @Column
     private String descricao;
 }

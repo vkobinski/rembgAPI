@@ -20,9 +20,6 @@ public class Categoria {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long categoriaID;
 
-    @OneToMany(mappedBy = "IDcategoria")
-    private Set<TipoPeca> tipoPecas;
-
     @Column
     private String descricao;
 }

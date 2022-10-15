@@ -50,19 +50,4 @@ public class Peca {
     @Column
     private Long tecido;
 
-    @ManyToOne
-    @JoinColumn(name = "IDtamanho")
-    private Tamanho IDtamanho;
-
-    @OneToMany(mappedBy = "IDPecaInferior")
-    private Set<Look> looksInferior;
-
-    @OneToMany(mappedBy = "IDPecaSuperior")
-    private Set<Look> looksSuperior;
-
-    @OneToMany(mappedBy = "IDPecaUnica")
-    private Set<Look> looksUnica;
-
-    @OneToMany(mappedBy = "IDPecaSobreposicao")
-    private Set<Look> looksSobreposicao;
 }

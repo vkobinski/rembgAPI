@@ -21,8 +21,6 @@ public class Tamanho {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long tamanhoID;
 
-    @OneToMany(mappedBy = "IDtamanho")
-    private Set<Peca> pecas;
 
     @Column
     private String descricao;
