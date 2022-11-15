@@ -40,5 +40,5 @@ public class Look {
     private Usuario usuario;
 
     @Column
-    private boolean status;
+    private Integer status;
 }

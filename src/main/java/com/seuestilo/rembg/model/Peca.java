@@ -49,4 +49,7 @@ public class Peca {
     @Column
     private Long tecido;
 
+    @Column
+    private Integer status;
+
 }
