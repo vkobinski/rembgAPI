@@ -29,4 +29,17 @@ public class CategoriaService {
     public ResponseEntity<List<Categoria>> getCategorias() {
         return ResponseEntity.ok(categoriaRepository.findAll());
     }
+
+    public ResponseEntity<Categoria> findCategoriaById(Long id) {
+        try {
+            return categoriaRepository.findById(id)
+                    .map(ResponseEntity::ok)
+                    .orElseThrow(() -> {
+                        throw new IllegalStateException("Could not find Categoria with the given ID");
+                    });
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.seuestilo.rembg.service;
 
+import com.seuestilo.rembg.model.Look;
 import com.seuestilo.rembg.repository.LookRepository;
 import com.seuestilo.rembg.repository.PecaRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -42,5 +43,15 @@ public class LookService {
          }));
 
 
+    }
+
+    public ResponseEntity<Look> criaLook(Look look) {
+
+        return ResponseEntity.ok(lookRepository.save(look));
+    }
+
+    public ResponseEntity<Look> findLookById(Long id) {
+        Optional<Look> optionalLook = lookRepository.findById(id);
+        return optionalLook.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

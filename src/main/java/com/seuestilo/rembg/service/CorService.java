@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -29,5 +30,16 @@ public class CorService {
     public ResponseEntity<List<Cor>> getCores() {
 
         return ResponseEntity.ok(corRepository.findAll());
+    }
+
+    public ResponseEntity<Cor> findCorById(Long id) {
+        Optional<Cor> corOptional = corRepository.findById(id);
+
+        if(corOptional.isPresent()) {
+            return ResponseEntity.ok(corOptional.get());
+        } else {
+            log.info("Could not found Cor with the given ID");
+            return ResponseEntity.notFound().build();
+        }
     }
 }
