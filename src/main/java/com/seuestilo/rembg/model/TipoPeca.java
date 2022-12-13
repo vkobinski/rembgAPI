@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class TipoPeca {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long tipoPecaID;
 
     @Column

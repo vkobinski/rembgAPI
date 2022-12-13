@@ -1,5 +1,13 @@
 package com.seuestilo.rembg;
 
+import com.seuestilo.rembg.model.Cor;
+import com.seuestilo.rembg.model.Peca;
+import com.seuestilo.rembg.model.TipoPeca;
+import com.seuestilo.rembg.model.Usuario;
+import com.seuestilo.rembg.repository.CorRepository;
+import com.seuestilo.rembg.repository.PecaRepository;
+import com.seuestilo.rembg.repository.TipoPecaRepository;
+import com.seuestilo.rembg.repository.UsuarioRepository;
 import com.seuestilo.rembg.storage.StorageService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -14,10 +22,11 @@ public class RembgApiApplication {
     }
 
     @Bean
-	CommandLineRunner init(StorageService storageService) {
+    CommandLineRunner init(StorageService storageService ) {
         return (args) -> {
             storageService.deleteAll();
             storageService.init();
+
         };
     }
 }

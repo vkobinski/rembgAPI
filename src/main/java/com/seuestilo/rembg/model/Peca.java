@@ -15,6 +15,18 @@ import javax.persistence.*;
 @ToString
 public class Peca {
 
+    public Peca(Long pecaID, Cor IDcor, TipoPeca categoriaTipo, String nome, String localCompra, Long marca, Usuario usuario, Long tecido, Integer status) {
+        this.pecaID = pecaID;
+        this.IDcor = IDcor;
+        this.categoriaTipo = categoriaTipo;
+        this.nome = nome;
+        this.localCompra = localCompra;
+        this.marca = marca;
+        this.usuario = usuario;
+        this.tecido = tecido;
+        this.status = status;
+    }
+
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long pecaID;
@@ -51,5 +63,6 @@ public class Peca {
 
     @Column
     private Integer status;
+
 
 }
