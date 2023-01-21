@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class Tamanho {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tamanhoID;
 
 

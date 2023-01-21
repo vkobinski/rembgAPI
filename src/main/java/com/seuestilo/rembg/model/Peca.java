@@ -28,7 +28,7 @@ public class Peca {
     }
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE)
     private Long pecaID;
 
     @Lob
