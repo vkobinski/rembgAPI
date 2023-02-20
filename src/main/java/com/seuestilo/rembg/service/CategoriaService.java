@@ -23,7 +23,7 @@ public class CategoriaService {
 
     public ResponseEntity<Categoria> criaCategoria(Categoria categoria) {
 
-        return ResponseEntity.ok(categoria);
+        return ResponseEntity.ok(categoriaRepository.save(categoria));
     }
 
     public ResponseEntity<List<Categoria>> getCategorias() {
@@ -42,4 +42,6 @@ public class CategoriaService {
             return ResponseEntity.notFound().build();
         }
     }
+
+
 }

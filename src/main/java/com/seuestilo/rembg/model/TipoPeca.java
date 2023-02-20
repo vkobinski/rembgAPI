@@ -16,8 +16,8 @@ import javax.persistence.*;
 public class TipoPeca {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long tipoPecaID;
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
 
     @Column
     private String descricao;

@@ -1,9 +1,6 @@
 package com.seuestilo.rembg.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -56,6 +53,7 @@ public class Peca {
 
     @ManyToOne
     @JoinColumn(name = "IDusuario")
+    @NonNull
     private Usuario usuario;
 
     @Column

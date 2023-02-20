@@ -1,23 +1,23 @@
 package com.seuestilo.rembg;
 
-import com.seuestilo.rembg.model.Cor;
-import com.seuestilo.rembg.model.Peca;
-import com.seuestilo.rembg.model.TipoPeca;
-import com.seuestilo.rembg.model.Usuario;
-import com.seuestilo.rembg.repository.CorRepository;
-import com.seuestilo.rembg.repository.PecaRepository;
-import com.seuestilo.rembg.repository.TipoPecaRepository;
-import com.seuestilo.rembg.repository.UsuarioRepository;
+import com.seuestilo.rembg.model.*;
+import com.seuestilo.rembg.repository.*;
+import com.seuestilo.rembg.service.CategoriaService;
 import com.seuestilo.rembg.service.PecaService;
+import com.seuestilo.rembg.service.TipoPecaService;
 import com.seuestilo.rembg.storage.StorageService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.Resource;
 
+import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 @SpringBootApplication
 public class RembgApiApplication {
@@ -27,22 +27,58 @@ public class RembgApiApplication {
     }
 
     @Bean
-    CommandLineRunner init(StorageService storageService, PecaService pecaService) {
+    CommandLineRunner init(StorageService storageService, PecaService pecaService, TipoPecaService tipoPecaService, TipoPecaRepository tipoPecaRepository,CategoriaService categoriaService, CategoriaRepository categoriaRepository) {
         return (args) -> {
+
+
+            ArrayList<String> categoriaArrayList = new ArrayList<>(Arrays.asList("pecasuperior", "pecainferior", "pecasobreposicao", "pecaunica", "acessorio", "sapato"));
+
+            for(String s : categoriaArrayList ) {
+                Categoria categoria = new Categoria();
+                categoria.setDescricao(s);
+
+                categoriaService.criaCategoria(categoria);
+            }
+
+            categoriaRepository.findAll().forEach((categoria) -> {
+
+                TipoPeca tipoPeca = new TipoPeca();
+                tipoPeca.setCategoria(categoria);
+                tipoPecaService.criaTipoPeca(tipoPeca);
+            });
+
+            List<TipoPeca> tipoPecaList = tipoPecaRepository.findAll();
+
             storageService.init();
 
-            Peca peca = new Peca();
+            storageService.loadAll().forEach((caminho) -> {
 
-            Resource resource = storageService.loadAsResource("bphoto08.jpeg");
-            byte[] bytes = Files.readAllBytes(resource.getFile().toPath());
+               Peca peca = new Peca();
+               byte[] bytes;
 
-            Byte[] imagem = ArrayUtils.toObject(bytes);
+                try {
+                    bytes = Files.readAllBytes(storageService.loadAsResource(caminho
+                            .getFileName().toString()).getFile().toPath());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
 
-            peca.setImagemComTrat(imagem);
-            peca.setImagemSemTrat(imagem);
+                Byte[] imagem = ArrayUtils.toObject(bytes);
 
-            pecaService.createPeca(peca);
+                if(caminho.startsWith("b")) {
+                    peca.setImagemComTrat(imagem);
+                } else {
+                    peca.setImagemSemTrat(imagem);
+                }
 
+                Random rand = new Random();
+                int randomIndex = rand.nextInt(tipoPecaList.size());
+
+                peca.setCategoriaTipo(tipoPecaList.get(randomIndex));
+
+
+                pecaService.createPeca(peca);
+            });
 
         };
     }
