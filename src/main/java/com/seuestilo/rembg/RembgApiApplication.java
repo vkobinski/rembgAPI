@@ -5,6 +5,7 @@ import com.seuestilo.rembg.repository.*;
 import com.seuestilo.rembg.service.CategoriaService;
 import com.seuestilo.rembg.service.PecaService;
 import com.seuestilo.rembg.service.TipoPecaService;
+import com.seuestilo.rembg.service.UsuarioService;
 import com.seuestilo.rembg.storage.StorageService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.boot.CommandLineRunner;
@@ -27,59 +28,69 @@ public class RembgApiApplication {
     }
 
     @Bean
-    CommandLineRunner init(StorageService storageService, PecaService pecaService, TipoPecaService tipoPecaService, TipoPecaRepository tipoPecaRepository,CategoriaService categoriaService, CategoriaRepository categoriaRepository) {
+    CommandLineRunner init(StorageService storageService, PecaService pecaService, TipoPecaService tipoPecaService, TipoPecaRepository tipoPecaRepository, CategoriaService categoriaService, CategoriaRepository categoriaRepository, UsuarioService usuarioService) {
         return (args) -> {
 
 
-            ArrayList<String> categoriaArrayList = new ArrayList<>(Arrays.asList("pecasuperior", "pecainferior", "pecasobreposicao", "pecaunica", "acessorio", "sapato"));
+            adicionaPecas(storageService, pecaService, tipoPecaService, tipoPecaRepository, categoriaService, categoriaRepository);
 
-            for(String s : categoriaArrayList ) {
-                Categoria categoria = new Categoria();
-                categoria.setDescricao(s);
+            Usuario usuario = new Usuario();
+            usuario.setEmail("vic@gmail.com");
+            usuario.setSenha("senha");
 
-                categoriaService.criaCategoria(categoria);
-            }
-
-            categoriaRepository.findAll().forEach((categoria) -> {
-
-                TipoPeca tipoPeca = new TipoPeca();
-                tipoPeca.setCategoria(categoria);
-                tipoPecaService.criaTipoPeca(tipoPeca);
-            });
-
-            List<TipoPeca> tipoPecaList = tipoPecaRepository.findAll();
-
-            storageService.init();
-
-            storageService.loadAll().forEach((caminho) -> {
-
-               Peca peca = new Peca();
-               byte[] bytes;
-
-                try {
-                    bytes = Files.readAllBytes(storageService.loadAsResource(caminho
-                            .getFileName().toString()).getFile().toPath());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-                Byte[] imagem = ArrayUtils.toObject(bytes);
-
-                if(caminho.startsWith("b")) {
-                    peca.setImagemComTrat(imagem);
-                } else {
-                    peca.setImagemSemTrat(imagem);
-                }
-
-                Random rand = new Random();
-                int randomIndex = rand.nextInt(tipoPecaList.size());
-
-                peca.setCategoriaTipo(tipoPecaList.get(randomIndex));
-
-
-                pecaService.createPeca(peca);
-            });
+            usuarioService.criaUsuario(usuario);
 
         };
+    }
+
+    private static void adicionaPecas(StorageService storageService, PecaService pecaService, TipoPecaService tipoPecaService, TipoPecaRepository tipoPecaRepository, CategoriaService categoriaService, CategoriaRepository categoriaRepository) {
+        ArrayList<String> categoriaArrayList = new ArrayList<>(Arrays.asList("pecasuperior", "pecainferior", "pecasobreposicao", "pecaunica", "acessorio", "sapato"));
+
+        for(String s : categoriaArrayList ) {
+            Categoria categoria = new Categoria();
+            categoria.setDescricao(s);
+
+            categoriaService.criaCategoria(categoria);
+        }
+
+        categoriaRepository.findAll().forEach((categoria) -> {
+
+            TipoPeca tipoPeca = new TipoPeca();
+            tipoPeca.setCategoria(categoria);
+            tipoPecaService.criaTipoPeca(tipoPeca);
+        });
+
+        List<TipoPeca> tipoPecaList = tipoPecaRepository.findAll();
+
+       /* storageService.init();
+
+        storageService.loadAll().forEach((caminho) -> {
+
+           Peca peca = new Peca();
+           byte[] bytes;
+
+            try {
+                bytes = Files.readAllBytes(storageService.loadAsResource(caminho
+                        .getFileName().toString()).getFile().toPath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            Byte[] imagem = ArrayUtils.toObject(bytes);
+
+            if(caminho.startsWith("b")) {
+                peca.setImagemComTrat(imagem);
+            } else {
+                peca.setImagemSemTrat(imagem);
+            }
+
+            Random rand = new Random();
+            int randomIndex = rand.nextInt(tipoPecaList.size());
+
+            peca.setCategoriaTipo(tipoPecaList.get(randomIndex));
+
+
+            pecaService.createPeca(peca);
+        });*/
     }
 }

@@ -25,4 +25,7 @@ public class Usuario {
     @Column
     private String email;
 
+    @Column
+    private String senha;
+
 }

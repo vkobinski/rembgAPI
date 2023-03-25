@@ -49,9 +49,9 @@ public class FileUploaderController {
     }
 
     @PostMapping("/")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException, InterruptedException {
+    public String handleFileUpload(@RequestParam("file") MultipartFile file,@RequestParam("userId") String userId, RedirectAttributes redirectAttributes) throws IOException, InterruptedException {
         storageService.store(file);
-        pythonExec.removeBackGround(file);
+        pythonExec.removeBackGround(file, Long.parseLong(userId));
 
         return "redirect:/files/" + "b" + file.getOriginalFilename();
     }

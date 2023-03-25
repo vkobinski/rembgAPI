@@ -2,8 +2,10 @@ package com.seuestilo.rembg.service;
 
 import com.seuestilo.rembg.model.Peca;
 import com.seuestilo.rembg.model.TipoPeca;
+import com.seuestilo.rembg.model.Usuario;
 import com.seuestilo.rembg.repository.PecaRepository;
 import com.seuestilo.rembg.repository.TipoPecaRepository;
+import com.seuestilo.rembg.repository.UsuarioRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,12 +21,14 @@ import java.util.Optional;
 public class PecaService {
 
     private final PecaRepository pecaRepository;
+    private final UsuarioRepository usuarioRepository;
     private final LookService lookService;
     private final TipoPecaRepository tipoPecaRepository;
 
     @Autowired
-    public PecaService(PecaRepository pecaRepository, LookService lookService, TipoPecaRepository tipoPecaRepository) {
+    public PecaService(PecaRepository pecaRepository, UsuarioRepository usuarioRepository, LookService lookService, TipoPecaRepository tipoPecaRepository) {
         this.pecaRepository = pecaRepository;
+        this.usuarioRepository = usuarioRepository;
         this.lookService = lookService;
         this.tipoPecaRepository = tipoPecaRepository;
     }
@@ -40,6 +44,14 @@ public class PecaService {
            log.error(e.getMessage());
            return ResponseEntity.badRequest().build();
         }
+    }
+
+    public ResponseEntity<List<Peca>> getPecaByUsuario(Long usuarioId){
+        Optional<Usuario> u = usuarioRepository.findById(usuarioId);
+        if(u.isPresent()) {
+            return ResponseEntity.ok(pecaRepository.getPecasByUsuario(u.get()));
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @Transactional

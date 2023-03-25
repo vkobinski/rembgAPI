@@ -1,6 +1,10 @@
 package com.seuestilo.rembg.python;
 
 
+import com.seuestilo.rembg.model.Peca;
+import com.seuestilo.rembg.repository.TipoPecaRepository;
+import com.seuestilo.rembg.repository.UsuarioRepository;
+import com.seuestilo.rembg.service.PecaService;
 import com.seuestilo.rembg.storage.StorageService;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
@@ -20,45 +24,98 @@ import java.io.*;
 @Service
 public class PythonExec {
 
-    private StorageService storageService;
+    private final StorageService storageService;
+    private final PecaService pecaService;
+    private final UsuarioRepository usuarioRepository;
+    private final TipoPecaRepository tipoPecaRepository;
 
     @Autowired
-    public PythonExec(StorageService storageService) {
+    public PythonExec(StorageService storageService, PecaService pecaService, UsuarioRepository usuarioRepository, TipoPecaRepository tipoPecaRepository) {
         this.storageService = storageService;
+        this.pecaService = pecaService;
+        this.usuarioRepository = usuarioRepository;
+        this.tipoPecaRepository = tipoPecaRepository;
     }
 
-    public void removeBackGround(MultipartFile file) throws IOException, InterruptedException {
+    public void removeBackGround(MultipartFile file, Long userId) throws IOException {
 
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpPost uploadFile = new HttpPost("http://localhost:5000");
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.addTextBody("field1", "yes", ContentType.TEXT_PLAIN);
+        try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
 
-        Resource resource = storageService.loadAsResource(file.getOriginalFilename());
-        File f = resource.getFile();
-        builder.addBinaryBody(
-                "file",
-                new FileInputStream(f),
-                ContentType.APPLICATION_OCTET_STREAM,
-                f.getName()
-        );
+            HttpPost uploadFile = new HttpPost("http://localhost:5000");
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            builder.addTextBody("field1", "yes", ContentType.TEXT_PLAIN);
 
-        HttpEntity multipart = builder.build();
-        uploadFile.setEntity(multipart);
-        CloseableHttpResponse response = httpClient.execute(uploadFile);
-        HttpEntity responseEntity = response.getEntity();
+            Resource resource = storageService.loadAsResource(file.getOriginalFilename());
+            File f = resource.getFile();
+            builder.addBinaryBody(
+                    "file",
+                    new FileInputStream(f),
+                    ContentType.APPLICATION_OCTET_STREAM,
+                    f.getName()
+            );
 
-        File file1 = new File("b"+file.getOriginalFilename());
+            HttpEntity multipart = builder.build();
+            uploadFile.setEntity(multipart);
+            CloseableHttpResponse response = httpClient.execute(uploadFile);
+            HttpEntity responseEntity = response.getEntity();
 
-        try(OutputStream outputStream = new FileOutputStream(file1)){
-            IOUtils.copy(responseEntity.getContent(), outputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
+            File file1 = new File("b" + file.getOriginalFilename());
+
+            Peca peca = new Peca();
+            peca.setImagemComTrat(byteToByte(convertFileToBytes(f)));
+            peca.setImagemSemTrat(byteToByte(file));
+
+            // TODO: REMOVER ESSE VALOR TRUNCADO
+            peca.setCategoriaTipo(tipoPecaRepository.findById(1L).get());
+
+            usuarioRepository.findById(userId).ifPresent(peca::setUsuario);
+
+            pecaService.createPeca(peca);
+
+            try (OutputStream outputStream = new FileOutputStream(file1)) {
+                IOUtils.copy(responseEntity.getContent(), outputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            storageService.store(file1);
+
+            file1.delete();
+        }
+    }
+
+    public Byte[] byteToByte(MultipartFile file) throws IOException {
+        byte[] byteArray = file.getBytes();
+        Byte[] byteObjectArray = new Byte[byteArray.length];
+
+        for (int i = 0; i < byteArray.length; i++) {
+            byteObjectArray[i] = byteArray[i];
         }
 
-        storageService.store(file1);
-
-        file1.delete();
+        return byteObjectArray;
     }
+
+    public Byte[] byteToByte(byte[] byteArray)  {
+        Byte[] byteObjectArray = new Byte[byteArray.length];
+
+        for (int i = 0; i < byteArray.length; i++) {
+            byteObjectArray[i] = byteArray[i];
+        }
+
+        return byteObjectArray;
+    }
+
+    public static byte[] convertFileToBytes(File file) throws IOException {
+        try(FileInputStream inputStream = new FileInputStream(file)) {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            byte[] buffer = new byte[10000];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            return outputStream.toByteArray();
+        }
+    }
+
 
 }

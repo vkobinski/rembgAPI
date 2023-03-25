@@ -38,4 +38,16 @@ public class UsuarioService {
             return ResponseEntity.notFound().build();
         }
     }
+
+    public Usuario authByEmail(String email, String senha) {
+
+        Optional<Usuario> usuarioOptional = usuarioRepository.findUsuarioByEmail(email);
+        if(usuarioOptional.isPresent()) {
+            if (usuarioOptional.get().getSenha().equals(senha)) return usuarioOptional.get();
+        }
+
+        return null;
+    }
+
+
 }

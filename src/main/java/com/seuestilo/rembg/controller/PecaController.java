@@ -31,6 +31,11 @@ public class PecaController {
         return pecaService.getPecaById(id);
     }
 
+    @GetMapping(path = "/user/{id}")
+    public ResponseEntity<List<Peca>> getPecaByUserId(@PathVariable(name = "id") Long userId) {
+        return pecaService.getPecaByUsuario(userId);
+    }
+
     @PostMapping
     public ResponseEntity<Peca> createPeca(@RequestBody Peca peca) {
         return pecaService.createPeca(peca);
