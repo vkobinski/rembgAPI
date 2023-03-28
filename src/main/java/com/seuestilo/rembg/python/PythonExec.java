@@ -1,9 +1,8 @@
 package com.seuestilo.rembg.python;
 
 
-import com.seuestilo.rembg.model.Peca;
-import com.seuestilo.rembg.repository.TipoPecaRepository;
-import com.seuestilo.rembg.repository.UsuarioRepository;
+import com.seuestilo.rembg.model.*;
+import com.seuestilo.rembg.repository.*;
 import com.seuestilo.rembg.service.PecaService;
 import com.seuestilo.rembg.storage.StorageService;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.Optional;
 
 @Service
 public class PythonExec {
@@ -28,22 +28,47 @@ public class PythonExec {
     private final PecaService pecaService;
     private final UsuarioRepository usuarioRepository;
     private final TipoPecaRepository tipoPecaRepository;
+    private final CategoriaRepository categoriaRepository;
+    private final TamanhoRepository tamanhoRepository;
+    private final CorRepository corRepository;
+    private final MarcaRepository marcaRepository;
 
     @Autowired
-    public PythonExec(StorageService storageService, PecaService pecaService, UsuarioRepository usuarioRepository, TipoPecaRepository tipoPecaRepository) {
+    public PythonExec(StorageService storageService, PecaService pecaService, UsuarioRepository usuarioRepository, TipoPecaRepository tipoPecaRepository, CategoriaRepository categoriaRepository, TamanhoRepository tamanhoRepository, CorRepository corRepository, MarcaRepository marcaRepository) {
         this.storageService = storageService;
         this.pecaService = pecaService;
         this.usuarioRepository = usuarioRepository;
         this.tipoPecaRepository = tipoPecaRepository;
+        this.categoriaRepository = categoriaRepository;
+        this.tamanhoRepository = tamanhoRepository;
+        this.corRepository = corRepository;
+        this.marcaRepository = marcaRepository;
     }
 
-    public void removeBackGround(MultipartFile file, Long userId) throws IOException {
+    public void removeBackGround(MultipartFile file, Peca peca) throws IOException {
 
         try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
 
             HttpPost uploadFile = new HttpPost("http://localhost:5000");
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             builder.addTextBody("field1", "yes", ContentType.TEXT_PLAIN);
+
+            Optional<Categoria> categoria = categoriaRepository.findById(peca.getCategoriaTipo().getCategoria().getCategoriaID());
+
+            if (categoria.isPresent()) {
+                Optional<TipoPeca> tipoPeca = tipoPecaRepository.getTipoPecasByCategoria(categoria.get());
+                tipoPeca.ifPresent(peca::setCategoriaTipo);
+            }
+
+            Optional<Tamanho> tamanho = tamanhoRepository.findById(peca.getTamanho().getTamanhoID());
+            tamanho.ifPresent(peca::setTamanho);
+
+            Optional<Cor> cor = corRepository.findById(peca.getCor().getCorID());
+            cor.ifPresent(peca::setCor);
+
+            Optional<Marca> marca = marcaRepository.findById((peca.getMarca().getMarcaId()));
+            marca.ifPresent(peca::setMarca);
+
 
             Resource resource = storageService.loadAsResource(file.getOriginalFilename());
             File f = resource.getFile();
@@ -54,6 +79,9 @@ public class PythonExec {
                     f.getName()
             );
 
+
+            peca.setImagemSemTrat(convertFileToBytes(f));
+
             HttpEntity multipart = builder.build();
             uploadFile.setEntity(multipart);
             CloseableHttpResponse response = httpClient.execute(uploadFile);
@@ -61,24 +89,17 @@ public class PythonExec {
 
             File file1 = new File("b" + file.getOriginalFilename());
 
-            Peca peca = new Peca();
-            peca.setImagemComTrat(byteToByte(convertFileToBytes(f)));
-            peca.setImagemSemTrat(byteToByte(file));
-
-            // TODO: REMOVER ESSE VALOR TRUNCADO
-            peca.setCategoriaTipo(tipoPecaRepository.findById(1L).get());
-
-            usuarioRepository.findById(userId).ifPresent(peca::setUsuario);
-
-            pecaService.createPeca(peca);
-
             try (OutputStream outputStream = new FileOutputStream(file1)) {
                 IOUtils.copy(responseEntity.getContent(), outputStream);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            storageService.store(file1);
+            File file2 = storageService.store(file1);
+            peca.setImagemComTrat(convertFileToBytes(file2));
+
+            pecaService.createPeca(peca);
 
             file1.delete();
         }

@@ -2,10 +2,7 @@ package com.seuestilo.rembg;
 
 import com.seuestilo.rembg.model.*;
 import com.seuestilo.rembg.repository.*;
-import com.seuestilo.rembg.service.CategoriaService;
-import com.seuestilo.rembg.service.PecaService;
-import com.seuestilo.rembg.service.TipoPecaService;
-import com.seuestilo.rembg.service.UsuarioService;
+import com.seuestilo.rembg.service.*;
 import com.seuestilo.rembg.storage.StorageService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.boot.CommandLineRunner;
@@ -28,22 +25,15 @@ public class RembgApiApplication {
     }
 
     @Bean
-    CommandLineRunner init(StorageService storageService, PecaService pecaService, TipoPecaService tipoPecaService, TipoPecaRepository tipoPecaRepository, CategoriaService categoriaService, CategoriaRepository categoriaRepository, UsuarioService usuarioService) {
+    CommandLineRunner init(StorageService storageService,CorService corService,TamanhoService tamanhoService,MarcaService marcaService, PecaService pecaService, TipoPecaService tipoPecaService, TipoPecaRepository tipoPecaRepository, CategoriaService categoriaService, CategoriaRepository categoriaRepository, UsuarioService usuarioService) {
         return (args) -> {
 
-
-            adicionaPecas(storageService, pecaService, tipoPecaService, tipoPecaRepository, categoriaService, categoriaRepository);
-
-            Usuario usuario = new Usuario();
-            usuario.setEmail("vic@gmail.com");
-            usuario.setSenha("senha");
-
-            usuarioService.criaUsuario(usuario);
+            adicionaPecas(storageService, corService, tamanhoService, marcaService,pecaService, tipoPecaService, tipoPecaRepository, categoriaService, categoriaRepository);
 
         };
     }
 
-    private static void adicionaPecas(StorageService storageService, PecaService pecaService, TipoPecaService tipoPecaService, TipoPecaRepository tipoPecaRepository, CategoriaService categoriaService, CategoriaRepository categoriaRepository) {
+    private static void adicionaPecas(StorageService storageService, CorService corService, TamanhoService tamanhoService, MarcaService marcaService,PecaService pecaService, TipoPecaService tipoPecaService, TipoPecaRepository tipoPecaRepository, CategoriaService categoriaService, CategoriaRepository categoriaRepository) {
         ArrayList<String> categoriaArrayList = new ArrayList<>(Arrays.asList("pecasuperior", "pecainferior", "pecasobreposicao", "pecaunica", "acessorio", "sapato"));
 
         for(String s : categoriaArrayList ) {
@@ -60,7 +50,21 @@ public class RembgApiApplication {
             tipoPecaService.criaTipoPeca(tipoPeca);
         });
 
-        List<TipoPeca> tipoPecaList = tipoPecaRepository.findAll();
+        Cor cor = new Cor();
+        cor.setDescricao("Rosa");
+
+        Tamanho tamanho = new Tamanho();
+        tamanho.setDescricao("GG");
+
+        Marca marca = new Marca();
+        marca.setDescricao("Supreme");
+
+        tamanhoService.criaTamanho(tamanho);
+        corService.criaCor(cor);
+        marcaService.criaMarca(marca);
+
+
+        //List<TipoPeca> tipoPecaList = tipoPecaRepository.findAll();
 
        /* storageService.init();
 

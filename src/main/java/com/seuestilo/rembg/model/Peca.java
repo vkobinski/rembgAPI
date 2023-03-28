@@ -1,6 +1,9 @@
 package com.seuestilo.rembg.model;
 
+import com.seuestilo.rembg.service.MarcaService;
+import com.seuestilo.rembg.service.TamanhoService;
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -12,9 +15,9 @@ import javax.persistence.*;
 @ToString
 public class Peca {
 
-    public Peca(Long pecaID, Cor IDcor, TipoPeca categoriaTipo, String nome, String localCompra, Long marca, Usuario usuario, Long tecido, Integer status) {
+    public Peca(Long pecaID, Cor IDcor, TipoPeca categoriaTipo, String nome, String localCompra, Marca marca, Usuario usuario, Long tecido, Integer status) {
         this.pecaID = pecaID;
-        this.IDcor = IDcor;
+        this.cor = IDcor;
         this.categoriaTipo = categoriaTipo;
         this.nome = nome;
         this.localCompra = localCompra;
@@ -29,14 +32,16 @@ public class Peca {
     private Long pecaID;
 
     @Lob
-    private Byte[] imagemSemTrat;
+    @Type(type = "org.hibernate.type.ImageType")
+    private byte[] imagemSemTrat;
 
     @Lob
-    private Byte[] imagemComTrat;
+    @Type(type = "org.hibernate.type.ImageType")
+    private byte[] imagemComTrat;
 
     @ManyToOne
     @JoinColumn(name = "IDcor")
-    private Cor IDcor;
+    private Cor cor;
 
     @ManyToOne
     @JoinColumn(name = "IDcategoriaTipo")
@@ -48,8 +53,9 @@ public class Peca {
     @Column
     private String localCompra;
 
-    @Column
-    private Long marca;
+    @ManyToOne
+    @JoinColumn(name = "IDMarca")
+    private Marca marca;
 
     @ManyToOne
     @JoinColumn(name = "IDusuario")
@@ -58,6 +64,10 @@ public class Peca {
 
     @Column
     private Long tecido;
+
+    @ManyToOne
+    @JoinColumn(name = "IDTamanho")
+    private Tamanho tamanho;
 
     @Column
     private Integer status;

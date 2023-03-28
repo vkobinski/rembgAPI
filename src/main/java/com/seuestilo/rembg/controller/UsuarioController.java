@@ -29,5 +29,9 @@ public class UsuarioController {
         else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
+    @PostMapping("/cadastro")
+    public ResponseEntity<Object> cadastraUsuario(@RequestBody Usuario usuario) {
+        return usuarioService.criaUsuario(usuario);
+    }
 
 }

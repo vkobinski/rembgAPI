@@ -1,5 +1,8 @@
 package com.seuestilo.rembg.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.seuestilo.rembg.model.Peca;
 import com.seuestilo.rembg.python.PythonExec;
 import com.seuestilo.rembg.storage.StorageFileNotFoundException;
 import com.seuestilo.rembg.storage.StorageService;
@@ -49,9 +52,14 @@ public class FileUploaderController {
     }
 
     @PostMapping("/")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file,@RequestParam("userId") String userId, RedirectAttributes redirectAttributes) throws IOException, InterruptedException {
+    public String handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("peca") String peca, RedirectAttributes redirectAttributes) throws IOException, InterruptedException {
         storageService.store(file);
-        pythonExec.removeBackGround(file, Long.parseLong(userId));
+
+        Peca pecaObj = new Gson().fromJson(peca, Peca.class);
+
+        System.out.println(pecaObj);
+
+        pythonExec.removeBackGround(file, pecaObj);
 
         return "redirect:/files/" + "b" + file.getOriginalFilename();
     }

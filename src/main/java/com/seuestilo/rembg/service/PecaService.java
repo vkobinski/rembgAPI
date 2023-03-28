@@ -37,6 +37,7 @@ public class PecaService {
         return ResponseEntity.ok(pecaRepository.findAll());
     }
 
+    @Transactional
     public ResponseEntity<Peca> createPeca(Peca peca) {
         try {
            return ResponseEntity.ok(pecaRepository.save(peca));

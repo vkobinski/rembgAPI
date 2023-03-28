@@ -3,6 +3,7 @@ package com.seuestilo.rembg.service;
 import com.seuestilo.rembg.model.Usuario;
 import com.seuestilo.rembg.repository.UsuarioRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.apache.bcel.classfile.Module;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,14 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public ResponseEntity<Usuario> criaUsuario(Usuario usuario) {
+    public ResponseEntity<Object> criaUsuario(Usuario usuario) {
+
+        Optional<Usuario> usuarioOptional = usuarioRepository.findUsuarioByEmail(usuario.getEmail());
+        if (usuarioOptional.isPresent()) {
+            log.error("Usuário Repetido", usuario);
+            return ResponseEntity.badRequest().body("Não podem existir usuários com mesmo email.");
+        }
+
         return ResponseEntity.ok(usuarioRepository.save(usuario));
     }
 

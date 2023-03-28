@@ -9,16 +9,16 @@ import lombok.ToString;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "tamanho")
+@Table(name = "marca")
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
-public class Tamanho {
+public class Marca {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long tamanhoID;
+    private Long marcaId;
     @Column
     private String descricao;
 }

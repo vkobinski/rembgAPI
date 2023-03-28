@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class Cor {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long corID;
 
     @Column
