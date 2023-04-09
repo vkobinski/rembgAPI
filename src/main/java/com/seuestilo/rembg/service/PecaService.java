@@ -90,7 +90,7 @@ public class PecaService {
     public ResponseEntity<Object> deleteById(Long id) {
         log.info("Deletando Peça com ID: " + id);
 
-        lookService.deleteByPecaId(id);
+        lookService.deleteByLookId(id);
 
         try {
 

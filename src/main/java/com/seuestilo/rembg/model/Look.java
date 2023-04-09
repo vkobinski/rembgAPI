@@ -6,6 +6,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "look")
@@ -31,10 +33,12 @@ public class Look {
     @JoinColumn(name = "IDPecaUnica")
     private Peca pecaUnica;
 
+    @ManyToMany
+    private Set<Peca> acessorios;
+
     @ManyToOne
     @JoinColumn(name = "IDPecaSobreposicao")
     private Peca pecaSobreposicao;
-
     @ManyToOne
     @JoinColumn(name = "idUser")
     private Usuario usuario;

@@ -9,13 +9,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @SpringBootApplication
 public class RembgApiApplication {
@@ -25,15 +23,15 @@ public class RembgApiApplication {
     }
 
     @Bean
-    CommandLineRunner init(StorageService storageService,CorService corService,TamanhoService tamanhoService,MarcaService marcaService, PecaService pecaService, TipoPecaService tipoPecaService, TipoPecaRepository tipoPecaRepository, CategoriaService categoriaService, CategoriaRepository categoriaRepository, UsuarioService usuarioService) {
+    CommandLineRunner init(StorageService storageService,CorService corService,TamanhoService tamanhoService,MarcaService marcaService,LookService lookService ,PecaService pecaService, TipoPecaService tipoPecaService, TipoPecaRepository tipoPecaRepository, CategoriaService categoriaService, CategoriaRepository categoriaRepository, UsuarioService usuarioService) {
         return (args) -> {
 
-            adicionaPecas(storageService, corService, tamanhoService, marcaService,pecaService, tipoPecaService, tipoPecaRepository, categoriaService, categoriaRepository);
+            adicionaPecas(storageService, corService, tamanhoService, marcaService,lookService,pecaService, tipoPecaService, tipoPecaRepository, categoriaService, categoriaRepository);
 
         };
     }
 
-    private static void adicionaPecas(StorageService storageService, CorService corService, TamanhoService tamanhoService, MarcaService marcaService,PecaService pecaService, TipoPecaService tipoPecaService, TipoPecaRepository tipoPecaRepository, CategoriaService categoriaService, CategoriaRepository categoriaRepository) {
+    private static void adicionaPecas(StorageService storageService, CorService corService, TamanhoService tamanhoService, MarcaService marcaService,LookService lookService,PecaService pecaService, TipoPecaService tipoPecaService, TipoPecaRepository tipoPecaRepository, CategoriaService categoriaService, CategoriaRepository categoriaRepository) {
         ArrayList<String> categoriaArrayList = new ArrayList<>(Arrays.asList("pecasuperior", "pecainferior", "pecasobreposicao", "pecaunica", "acessorio", "sapato"));
 
         for(String s : categoriaArrayList ) {
@@ -62,7 +60,6 @@ public class RembgApiApplication {
         tamanhoService.criaTamanho(tamanho);
         corService.criaCor(cor);
         marcaService.criaMarca(marca);
-
 
         //List<TipoPeca> tipoPecaList = tipoPecaRepository.findAll();
 
