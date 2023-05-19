@@ -26,7 +26,7 @@ public class RembgApiApplication {
     CommandLineRunner init(StorageService storageService,CorService corService,TamanhoService tamanhoService,MarcaService marcaService,LookService lookService ,PecaService pecaService, TipoPecaService tipoPecaService, TipoPecaRepository tipoPecaRepository, CategoriaService categoriaService, CategoriaRepository categoriaRepository, UsuarioService usuarioService) {
         return (args) -> {
 
-            adicionaPecas(storageService, corService, tamanhoService, marcaService,lookService,pecaService, tipoPecaService, tipoPecaRepository, categoriaService, categoriaRepository);
+            //adicionaPecas(storageService, corService, tamanhoService, marcaService,lookService,pecaService, tipoPecaService, tipoPecaRepository, categoriaService, categoriaRepository);
 
         };
     }

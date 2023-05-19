@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "usuario")
@@ -27,5 +28,9 @@ public class Usuario {
 
     @Column
     private String senha;
+
+    @OneToMany
+    @JoinColumn(name = "calendarsID")
+    private List<Calendario> calendarios;
 
 }

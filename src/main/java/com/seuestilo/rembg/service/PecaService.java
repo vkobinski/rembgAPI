@@ -1,8 +1,10 @@
 package com.seuestilo.rembg.service;
 
+import com.seuestilo.rembg.model.Categoria;
 import com.seuestilo.rembg.model.Peca;
 import com.seuestilo.rembg.model.TipoPeca;
 import com.seuestilo.rembg.model.Usuario;
+import com.seuestilo.rembg.repository.CategoriaRepository;
 import com.seuestilo.rembg.repository.PecaRepository;
 import com.seuestilo.rembg.repository.TipoPecaRepository;
 import com.seuestilo.rembg.repository.UsuarioRepository;
@@ -19,6 +21,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class PecaService {
+    private final CategoriaRepository categoriaRepository;
 
     private final PecaRepository pecaRepository;
     private final UsuarioRepository usuarioRepository;
@@ -26,15 +29,28 @@ public class PecaService {
     private final TipoPecaRepository tipoPecaRepository;
 
     @Autowired
-    public PecaService(PecaRepository pecaRepository, UsuarioRepository usuarioRepository, LookService lookService, TipoPecaRepository tipoPecaRepository) {
+    public PecaService(PecaRepository pecaRepository, UsuarioRepository usuarioRepository, LookService lookService, TipoPecaRepository tipoPecaRepository,
+                       CategoriaRepository categoriaRepository) {
         this.pecaRepository = pecaRepository;
         this.usuarioRepository = usuarioRepository;
         this.lookService = lookService;
         this.tipoPecaRepository = tipoPecaRepository;
+        this.categoriaRepository = categoriaRepository;
     }
 
     public ResponseEntity<List<Peca>> getPecas() {
         return ResponseEntity.ok(pecaRepository.findAll());
+    }
+
+    public ResponseEntity<List<Peca>> getPecasByUsuarioAndCategoriaTipo(Long usuarioId, Long categoriaId) {
+        Optional<Usuario> u = usuarioRepository.findById(usuarioId);
+        Optional<Categoria> c = categoriaRepository.findById(categoriaId);
+        Optional<TipoPeca> t = tipoPecaRepository.getTipoPecasByCategoria(c.get());
+
+        if(u.isPresent() && t.isPresent()) {
+            return ResponseEntity.ok(pecaRepository.getPecasByUsuarioAndCategoriaTipo(u.get(), t.get()));
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @Transactional
@@ -49,10 +65,7 @@ public class PecaService {
 
     public ResponseEntity<List<Peca>> getPecaByUsuario(Long usuarioId){
         Optional<Usuario> u = usuarioRepository.findById(usuarioId);
-        if(u.isPresent()) {
-            return ResponseEntity.ok(pecaRepository.getPecasByUsuario(u.get()));
-        }
-        return ResponseEntity.badRequest().build();
+        return u.map(usuario -> ResponseEntity.ok(pecaRepository.getPecasByUsuario(usuario))).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     @Transactional

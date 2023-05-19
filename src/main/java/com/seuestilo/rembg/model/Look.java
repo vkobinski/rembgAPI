@@ -21,6 +21,9 @@ public class Look {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long lookID;
 
+    @Column
+    private String nomeLook;
+
     @ManyToOne
     @JoinColumn(name = "IDPecaInferior")
     private Peca pecaInferior;
