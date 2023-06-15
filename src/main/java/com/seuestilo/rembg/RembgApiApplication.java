@@ -1,19 +1,17 @@
 package com.seuestilo.rembg;
 
 import com.seuestilo.rembg.model.*;
-import com.seuestilo.rembg.repository.*;
+import com.seuestilo.rembg.repository.CategoriaRepository;
+import com.seuestilo.rembg.repository.TipoPecaRepository;
 import com.seuestilo.rembg.service.*;
 import com.seuestilo.rembg.storage.StorageService;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @SpringBootApplication
 public class RembgApiApplication {
@@ -26,7 +24,7 @@ public class RembgApiApplication {
     CommandLineRunner init(StorageService storageService,CorService corService,TamanhoService tamanhoService,MarcaService marcaService,LookService lookService ,PecaService pecaService, TipoPecaService tipoPecaService, TipoPecaRepository tipoPecaRepository, CategoriaService categoriaService, CategoriaRepository categoriaRepository, UsuarioService usuarioService) {
         return (args) -> {
 
-            //adicionaPecas(storageService, corService, tamanhoService, marcaService,lookService,pecaService, tipoPecaService, tipoPecaRepository, categoriaService, categoriaRepository);
+            adicionaPecas(storageService, corService, tamanhoService, marcaService,lookService,pecaService, tipoPecaService, tipoPecaRepository, categoriaService, categoriaRepository);
 
         };
     }
