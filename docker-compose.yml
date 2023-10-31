@@ -1,0 +1,25 @@
+version: '3'
+services:
+  spring-boot-app:
+    build:
+      context: ./
+      dockerfile: spring-boot/Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
+  python-app:
+    build:
+      context: /../../IdeaProjects/rembgAPI/python
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+  database:
+    image: 'postgres:13.1-alpine'
+    container_name: db
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: vkobinski
+      POSTGRES_PASSWORD: teste
+      POSTGRES_DB: meuestilo

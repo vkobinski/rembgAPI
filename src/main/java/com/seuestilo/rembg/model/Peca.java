@@ -1,7 +1,5 @@
 package com.seuestilo.rembg.model;
 
-import com.seuestilo.rembg.service.MarcaService;
-import com.seuestilo.rembg.service.TamanhoService;
 import lombok.*;
 import org.hibernate.annotations.Type;
 
